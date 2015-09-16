@@ -32,7 +32,7 @@ public class UserDetailsServiceImpl implements UserDetailsService {
         com.jslss.board.entity.User user = userRepository.findByEmail(username);
         if (user == null)
             throw new UsernameNotFoundException("user not found");
-        
+        user.getRoles().size();
         List<GrantedAuthority> authorities = buildUserAuthority(user.getRoles());
         return buildUserForAuthentication(user, authorities);
 

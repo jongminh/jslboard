@@ -8,6 +8,7 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.config.annotation.web.servlet.configuration.EnableWebMvcSecurity;
 import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 import com.jslss.board.repository.UserDetailsServiceImpl;
 import com.jslss.board.repository.UserRepository;
@@ -16,9 +17,8 @@ import com.jslss.board.repository.UserRepository;
 @Configuration
 @EnableWebMvcSecurity
 @ComponentScan("com.jslss.board")
-public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
-	
-	
+public class WebSecurityConfig extends WebSecurityConfigurerAdapter
+{
 	@Autowired
 	UserRepository  userRepository;
 	
@@ -27,8 +27,12 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
         http
         	.authorizeRequests()
 		        .antMatchers("/css/**").permitAll()
-				.anyRequest().fullyAuthenticated()
+				.anyRequest().permitAll()
 				.and()
+	        .authorizeRequests()
+                .antMatchers("/register").permitAll()
+                .anyRequest().anonymous()
+                .and()
             .authorizeRequests()
                 .antMatchers("/", "/home").permitAll()
                 .anyRequest().authenticated()
@@ -44,14 +48,9 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     @Autowired
     public void configureGlobal(AuthenticationManagerBuilder auth) throws Exception {
     	auth.
-    		userDetailsService(new UserDetailsServiceImpl(userRepository));
+    		userDetailsService(new UserDetailsServiceImpl(userRepository)).passwordEncoder(new BCryptPasswordEncoder());
 //        auth
 //            .inMemoryAuthentication()
 //                .withUser("user").password("password").roles("USER");
     }
-    
-//    @Override
-//    public UserDetailsService userDetailsServiceBean() {
-//        return new UserDetailsServiceImpl();
-//    }
 }

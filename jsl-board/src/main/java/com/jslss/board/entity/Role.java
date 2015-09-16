@@ -9,10 +9,15 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
+import javax.persistence.Version;
 
 @Entity
 @Table(name = "role")
 public class Role {
+	
+	// resolve concurrency issue
+	@Version
+	private Long version;
 	
 	@Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -22,10 +27,18 @@ public class Role {
     @Column(name = "role", nullable = false, unique = true)
     private String role;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    //@ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
 	@JoinColumn(name = "userId", nullable = false)
     private User user;
     
+    public Long getVersion(){
+		return version;
+	}
+	
+	public void setVersion(Long version){
+		this.version = version;
+	}
     
 	public long getRoleId() {
 		return roleId;
@@ -56,7 +69,7 @@ public class Role {
 
 	@Override
 	public String toString() {
-		return "Role [roleId=" + roleId + ", role=" + role + ", user=" + user + "]";
+		return "Role [version=" + version + ", roleId=" + roleId + ", role=" + role + ", user=" + user + "]";
 	}
 }
 

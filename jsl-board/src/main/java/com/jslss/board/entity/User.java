@@ -6,22 +6,26 @@ import java.util.Set;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
+import javax.persistence.Version;
 
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
-import com.jslss.board.consts.Constants;
-
 
 @Entity
 @Table(name = "user")
-public class User implements Constants {
+public class User {
 	
+	// resolve concurrency issue
+	@Version
+	private Long version;
+		
 	@Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     @Column(name = "id", nullable = false, updatable = false)
@@ -52,11 +56,19 @@ public class User implements Constants {
     private Date lastLogOut;
     
     @Column(name = "action", nullable = false)
-    private boolean action;
+    private String action;
 
-    @OneToMany(mappedBy = "user")
+    @OneToMany(mappedBy = "user", fetch = FetchType.EAGER)
     private Set<Role> roles;
 
+    public Long getVersion(){
+		return version;
+	}
+	
+	public void setVersion(Long version){
+		this.version = version;
+	}
+    
     public User() {
     	
     }
@@ -74,9 +86,8 @@ public class User implements Constants {
         if(user.roles == null) {
             user.roles = new HashSet<Role>();
             user.createDate = new Date();
+            user.action = "A";
         }
-        user.roles.add(new Role(ROLE_USER,user));
-
         return user;
     }
     
@@ -132,10 +143,10 @@ public class User implements Constants {
 	public void setLastLogOut(Date lastLogOut) {
 		this.lastLogOut = lastLogOut;
 	}
-	public boolean isAction() {
+	public String isAction() {
 		return action;
 	}
-	public void setAction(boolean action) {
+	public void setAction(String action) {
 		this.action = action;
 	}
 	public Set<Role> getRoles() {
@@ -146,9 +157,10 @@ public class User implements Constants {
 	}
 	@Override
 	public String toString() {
-		return "User [userId=" + userId + ", email=" + email + ", lastName=" + lastName + ", firstName=" + firstName
-				+ ", password=" + password + ", enabled=" + enabled + ", createDate=" + createDate + ", lastLogIn="
-				+ lastLogIn + ", lastLogOut=" + lastLogOut + ", action=" + action + ", roles=" + roles + "]";
+		return "User [version=" + version + ", userId=" + userId + ", email=" + email + ", lastName=" + lastName
+				+ ", firstName=" + firstName + ", password=" + password + ", enabled=" + enabled + ", createDate="
+				+ createDate + ", lastLogIn=" + lastLogIn + ", lastLogOut=" + lastLogOut + ", action=" + action
+				+ ", roles=" + roles + "]";
 	}
     
     
