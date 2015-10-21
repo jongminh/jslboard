@@ -27,9 +27,8 @@ public class User {
 	private Long version;
 		
 	@Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
     @Column(name = "id", nullable = false, updatable = false)
-    private long userId;
+    private String userId;
 
     @Column(name = "email", nullable = false, unique = true)
     private String email;
@@ -72,11 +71,12 @@ public class User {
     public User() {
     	
     }
-    public static User createUser(String firstName, String lastName, 
+    public static User createUser(String id,String firstName, String lastName, 
     		String email, String password) {
     	PasswordEncoder encod = new BCryptPasswordEncoder(); 
         
     	User user = new User();
+    	user.userId = id;
         user.firstName = firstName;
         user.lastName = lastName;
         user.email = email;
@@ -91,8 +91,12 @@ public class User {
         return user;
     }
     
-	public long getUserId() {
+	public String getUserId() {
 		return userId;
+	}
+	
+	public void setUserId(String userId) {
+		this.userId = userId;
 	}
 	
 	public String getEmail() {

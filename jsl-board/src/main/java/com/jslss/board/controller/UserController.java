@@ -47,6 +47,7 @@ public class UserController implements Constants{
 			BindingResult result, WebRequest request,
 			RedirectAttributes redirectAttributes) {
 
+		System.out.println("userID: " + request.getParameter("userId"));
 		System.out.println("firstName: " + request.getParameter("firstName"));
 		System.out.println("lastName: " + request.getParameter("lastName"));
 		System.out.println("email: " + request.getParameter("email"));
@@ -60,6 +61,7 @@ public class UserController implements Constants{
 		}
 
 		User user = User.createUser(
+				request.getParameter("userId"), 
 				request.getParameter("firstName"), 
 				request.getParameter("lastName"),
 				request.getParameter("email"),

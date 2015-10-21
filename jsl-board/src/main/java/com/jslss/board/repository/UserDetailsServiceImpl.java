@@ -26,10 +26,10 @@ public class UserDetailsServiceImpl implements UserDetailsService {
 
     @Transactional(readOnly=true)
     @Override
-    public UserDetails loadUserByUsername(String username)
+    public UserDetails loadUserByUsername(String userId)
             throws UsernameNotFoundException {
 
-        com.jslss.board.entity.User user = userRepository.findByEmail(username);
+        com.jslss.board.entity.User user = userRepository.findByUserId(userId);
         if (user == null)
             throw new UsernameNotFoundException("user not found");
         user.getRoles().size();
@@ -40,7 +40,7 @@ public class UserDetailsServiceImpl implements UserDetailsService {
 
     private User buildUserForAuthentication(com.jslss.board.entity.User user,
                                             List<GrantedAuthority> authorities) {
-        return new User(user.getEmail(), user.getPassword(), authorities);
+        return new User(user.getUserId(), user.getPassword(), authorities);
     }
 
     private List<GrantedAuthority> buildUserAuthority(Set<Role> userRoles) {
