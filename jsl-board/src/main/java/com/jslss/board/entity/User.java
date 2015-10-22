@@ -2,14 +2,11 @@ package com.jslss.board.entity;
 
 import java.util.Date;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
@@ -75,7 +72,7 @@ public class User {
     		joinColumns={@JoinColumn(name="file_id")},
     		inverseJoinColumns={@JoinColumn(name="user_id")}
     )
-    private List<File> files;
+    private Set<File> files = new HashSet<File>();
     
     
     public Long getVersion(){
@@ -177,11 +174,11 @@ public class User {
 		this.roles = roles;
 	}
 	
-	public List<File> getFiles() {
+	public Set<File> getFiles() {
 		return files;
 	}
 
-	public void setFiles(List<File> files) {
+	public void setFiles(Set<File> files) {
 		this.files = files;
 	}
 		
