@@ -2,6 +2,7 @@ package com.jslss.board.entity;
 
 import java.util.Date;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 import javax.persistence.Column;
@@ -10,6 +11,9 @@ import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
+import javax.persistence.ManyToMany;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.Version;
@@ -33,10 +37,10 @@ public class User {
     @Column(name = "email", nullable = false, unique = true)
     private String email;
     
-    @Column(name = "lastName", nullable = false)
+    @Column(name = "last_name", nullable = false)
     private String lastName;
     
-    @Column(name = "firstName", nullable = false)
+    @Column(name = "first_name", nullable = false)
     private String firstName;
 
     @Column(name = "password", nullable = false)
@@ -45,13 +49,13 @@ public class User {
     @Column(name = "enabled", nullable = false)
     private boolean enabled;
     
-    @Column(name = "createDate" )
+    @Column(name = "create_date" )
     private Date createDate;
     
-    @Column(name = "lastLogIn" )
+    @Column(name = "last_log_in" )
     private Date lastLogIn;
     
-    @Column(name = "lastLogOut" )
+    @Column(name = "last_log_out" )
     private Date lastLogOut;
     
     @Column(name = "action", nullable = false)
@@ -59,7 +63,21 @@ public class User {
 
     @OneToMany(mappedBy = "user", fetch = FetchType.EAGER)
     private Set<Role> roles;
-
+    
+    @OneToMany(mappedBy = "user", fetch = FetchType.EAGER)
+    private Set<Comment> comments;
+    
+    @OneToMany(mappedBy = "user", fetch = FetchType.EAGER)
+    private Set<Board> boards;
+    
+    @ManyToMany
+    @JoinTable(name="user_file",
+    		joinColumns={@JoinColumn(name="file_id")},
+    		inverseJoinColumns={@JoinColumn(name="user_id")}
+    )
+    private List<File> files;
+    
+    
     public Long getVersion(){
 		return version;
 	}
@@ -71,12 +89,12 @@ public class User {
     public User() {
     	
     }
-    public static User createUser(String id,String firstName, String lastName, 
+    public static User createUser(String userId, String firstName, String lastName, 
     		String email, String password) {
     	PasswordEncoder encod = new BCryptPasswordEncoder(); 
         
     	User user = new User();
-    	user.userId = id;
+    	user.userId = userId;
         user.firstName = firstName;
         user.lastName = lastName;
         user.email = email;
@@ -94,7 +112,6 @@ public class User {
 	public String getUserId() {
 		return userId;
 	}
-	
 	public void setUserId(String userId) {
 		this.userId = userId;
 	}
@@ -159,12 +176,25 @@ public class User {
 	public void setRoles(Set<Role> roles) {
 		this.roles = roles;
 	}
+	
+	public List<File> getFiles() {
+		return files;
+	}
+
+	public void setFiles(List<File> files) {
+		this.files = files;
+	}
+		
+		 
 	@Override
 	public String toString() {
-		return "User [version=" + version + ", userId=" + userId + ", email=" + email + ", lastName=" + lastName
-				+ ", firstName=" + firstName + ", password=" + password + ", enabled=" + enabled + ", createDate="
-				+ createDate + ", lastLogIn=" + lastLogIn + ", lastLogOut=" + lastLogOut + ", action=" + action
-				+ ", roles=" + roles + "]";
+		return "User [version=" + version + ", userId=" + userId + ", email="
+				+ email + ", lastName=" + lastName + ", firstName=" + firstName
+				+ ", password=" + password + ", enabled=" + enabled
+				+ ", createDate=" + createDate + ", lastLogIn=" + lastLogIn
+				+ ", lastLogOut=" + lastLogOut + ", action=" + action
+				+ ", roles=" + roles + ", comments=" + comments + ", boards="
+				+ boards + ", files=" + files + "]";
 	}
     
     

@@ -1,4 +1,4 @@
-package com.jslss.board.repository;
+package com.jslss.board.service.impl;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -14,6 +14,7 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.jslss.board.entity.Role;
+import com.jslss.board.repository.UserRepository;
 
 public class UserDetailsServiceImpl implements UserDetailsService {
 

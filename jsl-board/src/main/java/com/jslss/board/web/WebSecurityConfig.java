@@ -10,8 +10,8 @@ import org.springframework.security.config.annotation.web.servlet.configuration.
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
-import com.jslss.board.repository.UserDetailsServiceImpl;
 import com.jslss.board.repository.UserRepository;
+import com.jslss.board.service.impl.UserDetailsServiceImpl;
 
 
 @Configuration

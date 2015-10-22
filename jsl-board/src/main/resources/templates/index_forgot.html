@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>JSL Board</title>
+    <title>JSL Board</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link href="../static/css/style.css" rel="stylesheet">
+    <link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css">
+    <link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+    <script src="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
+</head>
+<body>
+  <div class="container">
+  <label>Forgot your password, please send this form</label><div class="RUIFW-row">
+  <form class="form" id="example1">
+        <div class="form-group">
+            </div>
+             <div class="form-group">
+                <label for="example1-FirstName">First Name</label>
+                <input type="FirstName" class="form-control" id="example1-FirstName" name="example1-FirstName" placeholder="First Name">
+            </div>
+             <div class="form-group">
+                <label for="example1-LastName">Last Name</label>
+                <input type="LastName" class="form-control" id="example1-LastName" name="example1-LastName" placeholder="Last Name">
+            </div>
+           <div class="form-group">
+                <label for="example1-email">Email address</label>
+                <input type="email" class="form-control" id="example1-email" name="example1-email" placeholder="ex) aaa@bbb.ccc">
+            </div>
+            <button type="submit" class="btn btn-primary">Submit</button>
+   </form>   
+
+</script>
+        <!-- Load jQuery and jQuery-Validate scripts -->
+        <script src="js/jquery.js"></script>
+        <script src="http://cdnjs.cloudflare.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
+        <script>
+            // When the document is ready
+            $(document).ready(function () {
+			 //validation rules
+                //by default it will append a <label class="error> element to the invalid input
+                //and will add a "error" class to the input
+                $("#example1").validate({
+                    rules: {
+                        "example1-email": {
+                            required: true,
+                            email: true
+                        }  
+                    }
+                });
+            });
+        </script>  
+    
+</body>
+</html>

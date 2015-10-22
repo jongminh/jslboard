@@ -10,6 +10,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.context.request.WebRequest;
@@ -41,13 +42,13 @@ public class UserController implements Constants{
 
 		return "new_user";
 	}
-	
+
 	@RequestMapping(value = "/register", method = RequestMethod.POST)
 	public String registerBoard(@Valid RegistrationForm registrationForm,
 			BindingResult result, WebRequest request,
 			RedirectAttributes redirectAttributes) {
 
-		System.out.println("userID: " + request.getParameter("userId"));
+		System.out.println("userId: " + request.getParameter("userId"));
 		System.out.println("firstName: " + request.getParameter("firstName"));
 		System.out.println("lastName: " + request.getParameter("lastName"));
 		System.out.println("email: " + request.getParameter("email"));
@@ -66,13 +67,49 @@ public class UserController implements Constants{
 				request.getParameter("lastName"),
 				request.getParameter("email"),
 				request.getParameter("password"));
-		userRepository.save(user);
 		
-		Role role = new Role();
-		role.setRole(ROLE_USER);
-		role.setUser(user);
-		roleRepository.save(role);
+		if(!userRepository.exists(request.getParameter("userId")))
+		{
+			userRepository.save(user);
+			Role role = new Role();
+			role.setRole(ROLE_USER);
+			role.setUser(user);
+			roleRepository.save(role);
+		}
+		//else
+		// error >> user already exists
 		
 		return "home";
 	}
+	
+//	@RequestMapping(value = "/register", method = RequestMethod.POST)
+//	public String registerBoard(@Valid @RequestBody RegistrationForm registrationForm,
+//			BindingResult result, WebRequest request,
+//			RedirectAttributes redirectAttributes) {
+//
+//		LOGGER.debug("firstName: " + request.getParameter("firstName"));
+//		LOGGER.debug("lastName: " + request.getParameter("lastName"));
+//		LOGGER.debug("email: " + request.getParameter("email"));
+//		LOGGER.debug("password: " + request.getParameter("password"));
+//		
+//		if(result.hasErrors()){
+//			System.out.println(result.getAllErrors());
+//			//redirectAttributes.addAttribute("error", "Password should be more than 3 characters and less than 40");
+//			
+//			return "new_user";
+//		}
+//
+//		User user = User.createUser(registrationForm.getFirstName(),
+//				registrationForm.getLastName(),
+//				registrationForm.getEmail(),
+//				registrationForm.getPassword());
+//		userRepository.save(user);
+//		
+//		Role role = new Role();
+//		role.setRole(ROLE_USER);
+//		role.setUser(user);
+//		roleRepository.save(role);
+//		
+//		return "home";
+//	}
 }

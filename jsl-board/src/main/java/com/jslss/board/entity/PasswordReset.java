@@ -12,8 +12,8 @@ import javax.persistence.Table;
 import javax.persistence.Version;
 
 @Entity
-@Table(name = "role")
-public class Role {
+@Table(name = "password_reset")
+public class PasswordReset {
 	
 	// resolve concurrency issue
 	@Version
@@ -22,10 +22,10 @@ public class Role {
 	@Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     @Column(name = "id", nullable = false, updatable = false)
-    private long roleId;
+    private long pwResetId;
 
-    @Column(name = "role", nullable = false, unique = true)
-    private String role;
+    @Column(name = "reset_code", nullable = false, unique = true)
+    private String resetCode;
 
     //@ManyToOne(fetch = FetchType.LAZY)
     @ManyToOne(fetch = FetchType.EAGER)
@@ -39,18 +39,23 @@ public class Role {
 	public void setVersion(Long version){
 		this.version = version;
 	}
-    
-	public long getRoleId() {
-		return roleId;
+
+	public long getPwResetId() {
+		return pwResetId;
 	}
 
-	public String getRole() {
-		return role;
+	public void setPwResetId(long pwResetId) {
+		this.pwResetId = pwResetId;
 	}
 
-	public void setRole(String role) {
-		this.role = role;
+	public String getResetCode() {
+		return resetCode;
 	}
+
+	public void setResetCode(String resetCode) {
+		this.resetCode = resetCode;
+	}
+
 	public User getUser() {
 		return user;
 	}
@@ -58,19 +63,20 @@ public class Role {
 	public void setUser(User user) {
 		this.user = user;
 	}
-	
-	public Role() {
-    }
 
-    public Role(String role, User user) {
-        this.role = role;
-        this.user = user;
-    }
+	public PasswordReset() {
+	}
+
+	public PasswordReset(String resetCode, User user) {
+		this.resetCode = resetCode;
+		this.user = user;
+	}
 
 	@Override
 	public String toString() {
-		return "Role [version=" + version + ", roleId=" + roleId + ", role="
-				+ role + ", user=" + user + "]";
+		return "PasswordReset [version=" + version + ", pwResetId=" + pwResetId
+				+ ", resetCode=" + resetCode + ", user=" + user + "]";
 	}
+
 }
 
