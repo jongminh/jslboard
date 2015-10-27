@@ -5,12 +5,9 @@ import javax.validation.Valid;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.context.embedded.RegistrationBean;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.context.request.WebRequest;
@@ -48,11 +45,11 @@ public class UserController implements Constants{
 			BindingResult result, WebRequest request,
 			RedirectAttributes redirectAttributes) {
 
-		System.out.println("userId: " + request.getParameter("userId"));
-		System.out.println("firstName: " + request.getParameter("firstName"));
-		System.out.println("lastName: " + request.getParameter("lastName"));
-		System.out.println("email: " + request.getParameter("email"));
-		System.out.println("password: " + request.getParameter("password"));
+		//System.out.println("userId: " + request.getParameter("userId"));
+		//System.out.println("firstName: " + request.getParameter("firstName"));
+		//System.out.println("lastName: " + request.getParameter("lastName"));
+		//System.out.println("email: " + request.getParameter("email"));
+		//System.out.println("password: " + request.getParameter("password"));
 		
 		if(result.hasErrors()){
 			System.out.println(result.getAllErrors());
@@ -68,12 +65,11 @@ public class UserController implements Constants{
 				request.getParameter("email"),
 				request.getParameter("password"));
 		
-		if(!userRepository.exists(request.getParameter("userId")))
+		if(!userRepository.exists(request.getParameter("userId")) &&
+				userRepository.findByEmail(request.getParameter("email")) == null)
 		{
 			userRepository.save(user);
-			Role role = new Role();
-			role.setRole(ROLE_USER);
-			role.setUser(user);
+			Role role = new Role(ROLE_USER, user);
 			roleRepository.save(role);
 		}
 		//else

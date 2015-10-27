@@ -1,9 +1,10 @@
 package com.jslss.board.entity;
 
+import java.util.ArrayList;
 import java.util.Date;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.List;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -18,10 +19,12 @@ import javax.persistence.Version;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
+import com.jslss.board.consts.Constants;
+
 
 @Entity
 @Table(name = "user")
-public class User {
+public class User implements Constants{
 	
 	// resolve concurrency issue
 	@Version
@@ -55,24 +58,26 @@ public class User {
     @Column(name = "last_log_out" )
     private Date lastLogOut;
     
-    @Column(name = "action", nullable = false)
+    @Column(name = "action", nullable = false, length = 1)
     private String action;
 
-    @OneToMany(mappedBy = "user", fetch = FetchType.EAGER)
-    private Set<Role> roles;
+//    @OneToMany(mappedBy = "user", fetch=FetchType.EAGER, 
+//    		cascade = {CascadeType.ALL}, orphanRemoval = true)
+    @OneToMany(mappedBy = "user", fetch=FetchType.EAGER)
+    private List<Role> roles;
     
-    @OneToMany(mappedBy = "user", fetch = FetchType.EAGER)
-    private Set<Comment> comments;
+    @OneToMany(mappedBy = "user", fetch = FetchType.LAZY)
+    private List<Comment> comments;
     
-    @OneToMany(mappedBy = "user", fetch = FetchType.EAGER)
-    private Set<Board> boards;
+    @OneToMany(mappedBy = "user", fetch = FetchType.LAZY)
+    private List<Board> boards;
     
-    @ManyToMany
+    @ManyToMany(cascade=CascadeType.ALL)
     @JoinTable(name="user_file",
-    		joinColumns={@JoinColumn(name="file_id")},
-    		inverseJoinColumns={@JoinColumn(name="user_id")}
+    		joinColumns={@JoinColumn(name="user_id")},
+    		inverseJoinColumns={@JoinColumn(name="file_id")}
     )
-    private Set<File> files = new HashSet<File>();
+    private List<BoardFile> boardFiles = new ArrayList<BoardFile>();
     
     
     public Long getVersion(){
@@ -96,23 +101,17 @@ public class User {
         user.lastName = lastName;
         user.email = email;
         user.password = encod.encode(password);
-        user.enabled = false;
+        user.roles = new ArrayList<Role>();
+        user.createDate = new Date();
+        user.action = ACTION_ADD;
 
-        if(user.roles == null) {
-            user.roles = new HashSet<Role>();
-            user.createDate = new Date();
-            user.action = "A";
-        }
         return user;
     }
     
 	public String getUserId() {
 		return userId;
 	}
-	public void setUserId(String userId) {
-		this.userId = userId;
-	}
-	
+
 	public String getEmail() {
 		return email;
 	}
@@ -167,22 +166,51 @@ public class User {
 	public void setAction(String action) {
 		this.action = action;
 	}
-	public Set<Role> getRoles() {
-		return roles;
-	}
-	public void setRoles(Set<Role> roles) {
-		this.roles = roles;
-	}
-	
-	public Set<File> getFiles() {
-		return files;
+	public List<Comment> getComments() {
+		return comments;
 	}
 
-	public void setFiles(Set<File> files) {
-		this.files = files;
+	public void setComments(List<Comment> comments) {
+		this.comments = comments;
+	}
+
+	public List<Board> getBoards() {
+		return boards;
+	}
+	public void setBoards(List<Board> boards) {
+		this.boards = boards;
+	}
+	public void addBoard(Board board) {
+		if(this.boards == null)
+			this.boards = new ArrayList<Board>();
+		
+		this.boards.add(board);
+	}
+	public void removeBoard(Board board) {
+		this.boards.remove(board);
+	}
+
+	public List<Role> getRoles() {
+		return roles;
+	}
+	public void setRoles(List<Role> roles) {
+		this.roles = roles;
+	}
+	public void addRole(Role role) {
+		this.roles.add(role);
+	}
+	public void removeRole(Role role) {
+		this.roles.remove(role);
+	}
+	
+	public List<BoardFile> getBoardFiles() {
+		return boardFiles;
+	}
+
+	public void setBoardFiles(List<BoardFile> files) {
+		this.boardFiles = files;
 	}
 		
-		 
 	@Override
 	public String toString() {
 		return "User [version=" + version + ", userId=" + userId + ", email="
@@ -191,8 +219,7 @@ public class User {
 				+ ", createDate=" + createDate + ", lastLogIn=" + lastLogIn
 				+ ", lastLogOut=" + lastLogOut + ", action=" + action
 				+ ", roles=" + roles + ", comments=" + comments + ", boards="
-				+ boards + ", files=" + files + "]";
+				+ boards + ", files=" + boardFiles + "]";
 	}
-    
-    
+
 }

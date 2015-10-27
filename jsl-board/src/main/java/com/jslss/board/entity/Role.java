@@ -2,7 +2,6 @@ package com.jslss.board.entity;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -24,11 +23,11 @@ public class Role {
     @Column(name = "id", nullable = false, updatable = false)
     private long roleId;
 
-    @Column(name = "role", nullable = false, unique = true)
+    @Column(name = "role", nullable = false)
     private String role;
 
-    //@ManyToOne(fetch = FetchType.LAZY)
-    @ManyToOne(fetch = FetchType.EAGER)
+//    @ManyToOne(optional = false, cascade=CascadeType.PERSIST)
+    @ManyToOne
 	@JoinColumn(name = "user_id", nullable = false)
     private User user;
     
@@ -62,6 +61,10 @@ public class Role {
 	public Role() {
     }
 
+	public Role(String role) {
+        this.role = role;
+    }
+	
     public Role(String role, User user) {
         this.role = role;
         this.user = user;

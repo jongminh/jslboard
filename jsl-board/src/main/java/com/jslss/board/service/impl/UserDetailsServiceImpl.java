@@ -36,23 +36,20 @@ public class UserDetailsServiceImpl implements UserDetailsService {
         user.getRoles().size();
         List<GrantedAuthority> authorities = buildUserAuthority(user.getRoles());
         return buildUserForAuthentication(user, authorities);
-
     }
 
-    private User buildUserForAuthentication(com.jslss.board.entity.User user,
-                                            List<GrantedAuthority> authorities) {
-        return new User(user.getUserId(), user.getPassword(), authorities);
-    }
-
-    private List<GrantedAuthority> buildUserAuthority(Set<Role> userRoles) {
+    private List<GrantedAuthority> buildUserAuthority(List<Role> userRoles) {
 
     	Set<GrantedAuthority> setAuths = new HashSet<GrantedAuthority>();
-
     	// Build user's authorities
     	for (Role role : userRoles) {
     		setAuths.add(new SimpleGrantedAuthority(role.getRole()));
     	}
 
     	return new ArrayList<GrantedAuthority>(setAuths);
+    }
+    private User buildUserForAuthentication(com.jslss.board.entity.User user,
+    		List<GrantedAuthority> authorities) {
+    	return new User(user.getUserId(), user.getPassword(), user.isEnabled(), true, true, true, authorities);
     }
 }

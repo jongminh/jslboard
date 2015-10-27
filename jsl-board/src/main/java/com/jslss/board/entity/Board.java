@@ -1,64 +1,68 @@
 package com.jslss.board.entity;
 
+import java.util.ArrayList;
 import java.util.Date;
-import java.util.Set;
+import java.util.List;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
+import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Version;
 
+import com.jslss.board.consts.Constants;
+
 @Entity
 @Table(name = "board")
-public class Board {
+public class Board implements Constants{
 	
 	// resolve concurrency issue
 	@Version
 	private Long version;
 	
 	@Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+	@SequenceGenerator(name="board_seq", sequenceName="board_seq", initialValue=1, allocationSize=1)
+    @GeneratedValue(strategy=GenerationType.SEQUENCE, generator="board_seq")
     @Column(name = "id", nullable = false, updatable = false)
     private long boardId;
 
-    @Column(name = "title", nullable = false, unique = true)
+    @Column(name = "title", nullable = false)
     private String title;
     
-    @Column(name = "content", nullable = false, unique = true)
+    @Column(name = "content", nullable = false)
     private String content;
     
-    @Column(name = "view_count", nullable = false, unique = true)
-    private String viewCount;
+    @Column(name = "view_count", nullable = false)
+    private int viewCount;
     
-    @Column(name = "create_date")
+    @Column(name = "create_date", nullable = false)
     private Date createDate;
 
-    @Column(name = "last_update_date")
+    @Column(name = "last_update_date", nullable = false)
     private Date lastUpdateDate;
 
-    @Column(name = "action", nullable = false, unique = true)
+    @Column(name = "action", nullable = false, length = 1)
     private String action;
 
-    @Column(name = "notice", nullable = false, unique = true)
+    @Column(name = "notice")		// TODO:: what do we put in it?
     private String notice;
     
     @Column(name = "notice_expired")
     private Date noticeExpired;
 
-    @OneToMany(mappedBy = "board", fetch = FetchType.EAGER)
-    private Set<File> files;
+    @OneToMany(mappedBy = "board")
+    private List<BoardFile> files;
     
-    @OneToMany(mappedBy = "board", fetch = FetchType.EAGER)
-    private Set<Comment> comments;
+    @OneToMany(mappedBy = "board")
+    private List<Comment> comments;
     
-    @ManyToOne(fetch = FetchType.EAGER)
+    @ManyToOne
 	@JoinColumn(name = "user_id", nullable = false)
     private User user;
 
@@ -72,10 +76,6 @@ public class Board {
 
 	public long getBoardId() {
 		return boardId;
-	}
-
-	public void setBoardId(long boardId) {
-		this.boardId = boardId;
 	}
 
 	public String getTitle() {
@@ -94,11 +94,11 @@ public class Board {
 		this.content = content;
 	}
 
-	public String getViewCount() {
+	public int getViewCount() {
 		return viewCount;
 	}
 
-	public void setViewCount(String viewCount) {
+	public void setViewCount(int viewCount) {
 		this.viewCount = viewCount;
 	}
 
@@ -142,22 +142,42 @@ public class Board {
 		this.noticeExpired = noticeExpired;
 	}
 
-	public Set<File> getFiles() {
+	public List<BoardFile> getFiles() {
 		return files;
 	}
 
-	public void setFiles(Set<File> files) {
+	public void setFiles(List<BoardFile> files) {
 		this.files = files;
 	}
-
-	public Set<Comment> getComments() {
+	
+	public void addFile(BoardFile file) {
+		if(this.files == null)
+			this.files = new ArrayList<BoardFile>();
+		
+		this.files.add(file);
+	}
+	public void removeFile(BoardFile file) {
+		this.files.remove(file);
+	}
+	
+	public List<Comment> getComments() {
 		return comments;
 	}
 
-	public void setComments(Set<Comment> comments) {
+	public void setComments(List<Comment> comments) {
 		this.comments = comments;
 	}
 
+	public void addComment(Comment comment) {
+		if(this.comments == null)
+			this.comments = new ArrayList<Comment>();
+		
+		this.comments.add(comment);
+	}
+	public void removeComment(Comment comment) {
+		this.comments.remove(comment);
+	}
+	
 	public User getUser() {
 		return user;
 	}
@@ -169,9 +189,9 @@ public class Board {
 	public Board() {
 	}
 
-	public Board(long boardId, String title, String content, String viewCount,
+	public Board(long boardId, String title, String content, int viewCount,
 			Date createDate, Date lastUpdateDate, String action, String notice,
-			Date noticeExpired, Set<File> files, Set<Comment> comments,
+			Date noticeExpired, List<BoardFile> files, List<Comment> comments,
 			User user) {
 		this.boardId = boardId;
 		this.title = title;
@@ -186,6 +206,40 @@ public class Board {
 		this.comments = comments;
 		this.user = user;
 	}
+	
+	public static Board createBoard(String title, String content,
+			String notice, Date noticeExpired, 
+			List<BoardFile> files, List<Comment> comments,
+			User user) {
+
+		Board board = new Board();
+		board.title = title;
+		board.content = content;
+		board.viewCount = 0;
+		board.createDate = new Date();
+		board.lastUpdateDate = new Date();
+		board.action = ACTION_ADD;
+		board.user = user;
+
+		if(notice != null) {
+			board.notice = notice;
+			board.noticeExpired = noticeExpired;
+		}
+
+		if(files == null) {
+			board.files = new ArrayList<BoardFile>();
+		}else{
+			board.files = files;	
+		}
+
+		if(comments == null) {
+			board.comments = new ArrayList<Comment>();
+		} else { 
+			board.comments = comments;
+		}
+
+		return board;
+	}
 
 	@Override
 	public String toString() {
@@ -197,7 +251,6 @@ public class Board {
 				+ ", files=" + files + ", comments=" + comments + ", user="
 				+ user + "]";
 	}
-    
 
 }
 

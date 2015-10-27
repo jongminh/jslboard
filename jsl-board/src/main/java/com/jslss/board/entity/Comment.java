@@ -4,29 +4,32 @@ import java.util.Date;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Version;
 
+import com.jslss.board.consts.Constants;
+
 @Entity
 @Table(name = "comment")
-public class Comment {
+public class Comment implements Constants{
 	
 	// resolve concurrency issue
 	@Version
 	private Long version;
 	
 	@Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+	@SequenceGenerator(name="comment_seq", sequenceName="comment_seq", initialValue=1, allocationSize=1)
+    @GeneratedValue(strategy=GenerationType.SEQUENCE, generator="comment_seq")
     @Column(name = "id", nullable = false, updatable = false)
     private long commentId;
 
-    @Column(name = "text", nullable = false, unique = true)
+    @Column(name = "text", nullable = false)
     private String text;
     
     @Column(name = "create_date")
@@ -35,18 +38,14 @@ public class Comment {
     @Column(name = "last_update_date")
     private Date lastUpdateDate;
     
-    @Column(name = "action", nullable = false, unique = true)
+    @Column(name = "action", nullable = false, length = 1)
     private String action;
     
-    @Column(name = "file_size", nullable = false, unique = true)
-    private String fileSize;
-    
-    //@ManyToOne(fetch = FetchType.LAZY)
-    @ManyToOne(fetch = FetchType.EAGER)
+    @ManyToOne
 	@JoinColumn(name = "board_id", nullable = false)
     private Board board;
     
-    @ManyToOne(fetch = FetchType.EAGER)
+    @ManyToOne
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
@@ -98,14 +97,6 @@ public class Comment {
 		this.action = action;
 	}
 
-	public String getFileSize() {
-		return fileSize;
-	}
-
-	public void setFileSize(String fileSize) {
-		this.fileSize = fileSize;
-	}
-
 	public Board getBoard() {
 		return board;
 	}
@@ -125,26 +116,37 @@ public class Comment {
 	public Comment() {
 	}
 	
+	public static Comment createComment( String text, Board board,
+			User user) {
+
+		Comment comment = new Comment();
+		comment.text = text;
+		comment.board = board;
+		comment.user = user;
+		comment.createDate = new Date();
+		comment.lastUpdateDate = new Date();
+		comment.action = ACTION_ADD;
+
+		return comment;
+	}
+	
 	public Comment(long commentId, String text, Date createDate,
-			Date lastUpdateDate, String action, String fileSize, Board board,
+			Date lastUpdateDate, String action, Board board,
 			User user) {
 		this.commentId = commentId;
 		this.text = text;
 		this.createDate = createDate;
 		this.lastUpdateDate = lastUpdateDate;
 		this.action = action;
-		this.fileSize = fileSize;
 		this.board = board;
 		this.user = user;
 	}
 
 	@Override
 	public String toString() {
-		return "Comment [version=" + version + ", commentId=" + commentId
-				+ ", text=" + text + ", createDate=" + createDate
-				+ ", lastUpdateDate=" + lastUpdateDate + ", action=" + action
-				+ ", fileSize=" + fileSize + ", board=" + board + ", user="
-				+ user + "]";
+		return "Comment [version=" + version + ", commentId=" + commentId + ", text=" + text + ", createDate="
+				+ createDate + ", lastUpdateDate=" + lastUpdateDate + ", action=" + action + ", board=" + board
+				+ ", user=" + user + "]";
 	}
     
 }

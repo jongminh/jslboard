@@ -2,7 +2,6 @@ package com.jslss.board.entity;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -27,8 +26,7 @@ public class PasswordReset {
     @Column(name = "reset_code", nullable = false, unique = true)
     private String resetCode;
 
-    //@ManyToOne(fetch = FetchType.LAZY)
-    @ManyToOne(fetch = FetchType.EAGER)
+    @ManyToOne
 	@JoinColumn(name = "user_id", nullable = false)
     private User user;
     
